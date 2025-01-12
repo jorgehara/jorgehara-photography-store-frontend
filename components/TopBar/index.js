@@ -7,7 +7,7 @@ import Image from "next/image";
 import ThemeToggle from "../ThemeToggle";
 import { HomeIcon, PhotoIcon, UserGroupIcon, CameraIcon, ArrowRightOnRectangleIcon as LoginIcon, ArrowLeftOnRectangleIcon as LogoutIcon } from "@heroicons/react/24/outline";
 
-const TopBar = ({ handleWorkScroll, handleAboutScroll, handleServicesScroll }) => {
+const TopBar = ({ handleWorkScroll, handleContactScroll, handleServicesScroll }) => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -18,6 +18,14 @@ const TopBar = ({ handleWorkScroll, handleAboutScroll, handleServicesScroll }) =
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
   }, []);
+
+  const handleServicesClick = () => {
+    window.location.href = 'http://localhost:3001/#services'; // Redirige a la sección de servicios
+  };
+
+  const handleContactClick = () => {
+    window.location.href = 'http://localhost:3001/#contact'; // Redirige a la sección de contacto
+  };
 
   const handleGalleryClick = () => {
     router.push('/gallery');
@@ -74,7 +82,10 @@ const TopBar = ({ handleWorkScroll, handleAboutScroll, handleServicesScroll }) =
                   </button>
                   
                   <button
-                    onClick={handleServicesScroll}
+                    onClick={() => {
+                      handleServicesClick();
+                      handleServicesScroll();
+                    }}
                     className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium 
                       transition-colors hover:bg-gray-100 dark:hover:bg-gray-800
                       ${theme === 'dark' ? 'text-gray-200 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
@@ -83,7 +94,10 @@ const TopBar = ({ handleWorkScroll, handleAboutScroll, handleServicesScroll }) =
                   </button>
                   
                   <button
-                    onClick={handleAboutScroll}
+                    onClick={() => {
+                      handleContactClick();
+                      handleContactScroll();
+                    }}
                     className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium 
                       transition-colors hover:bg-gray-100 dark:hover:bg-gray-800
                       ${theme === 'dark' ? 'text-gray-200 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>

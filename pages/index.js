@@ -47,9 +47,9 @@ export default function Home() {
 
   const handleServicesScroll = () => {
     servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+};
 
-  const handleAboutScroll = () => {
+  const handleContactScroll = () => {
     contactRef.current?.scrollIntoView({ 
       behavior: "smooth", 
       block: "center"
@@ -83,7 +83,7 @@ export default function Home() {
       <div className="relative">
         <TopBar
           handleWorkScroll={handleWorkScroll}
-          handleAboutScroll={handleAboutScroll}
+          handleContactScroll={handleContactScroll}
           handleServicesScroll={handleServicesScroll}
         />
         
