@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import axios from '../lib/axios';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { FcGoogle } from "react-icons/fc";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -30,7 +32,7 @@ const RegisterPage = () => {
       }));
     }
   }, [session]);
-
+  
   const countries = [
     { value: 'AR', label: 'Argentina' },
     { value: 'BR', label: 'Brasil' },
@@ -71,7 +73,7 @@ const RegisterPage = () => {
       setError(null);
       setTimeout(() => {
         router.push('/gallery'); // Redirige a la galería después de 2 segundos
-      }, 4000);
+      }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Error al crear la cuenta');
     }
@@ -109,7 +111,7 @@ const RegisterPage = () => {
             onClick={handleGoogleLogin}
             className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
-            <img src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" />
+            <FcGoogle className="w-5 h-5 mr-2" />
             Continuar con Google
           </button>
         </div>
@@ -127,7 +129,7 @@ const RegisterPage = () => {
           {/* Campos del formulario */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700" required>
+              <label className="block text-sm font-medium text-gray-700">
                 Nombre completo
               </label>
               <input
@@ -141,7 +143,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700" required>
+              <label className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -155,7 +157,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700" required>
+              <label className="block text-sm font-medium text-gray-700">
                 País
               </label>
               <select
@@ -175,7 +177,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700" required>
+              <label className="block text-sm font-medium text-gray-700">
                 ¿Qué deseas hacer?
               </label>
               <select
@@ -192,7 +194,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700" required>
+              <label className="block text-sm font-medium text-gray-700">
                 Contraseña
               </label>
               <input
@@ -206,7 +208,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700" required>
+              <label className="block text-sm font-medium text-gray-700">
                 Confirmar contraseña
               </label>
               <input
