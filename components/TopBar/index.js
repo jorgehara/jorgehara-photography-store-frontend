@@ -12,19 +12,33 @@ const TopBar = ({ handleWorkScroll, handleContactScroll, handleServicesScroll })
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [avatar, setAvatar] = useState('/images/default-avatar.png'); // Estado para el avatar
 
   useEffect(() => {
     setMounted(true);
     const token = localStorage.getItem('token');
+    const name = localStorage.getItem('userName');
+    const storedAvatar = localStorage.getItem('avatar'); // Captura el avatar del localStorage
     setIsLoggedIn(!!token);
+
+    console.log("Token:", token);
+    console.log("User Name from localStorage:", name);
+
+    if (name) {
+      setUserName(name);
+    }
+    if (storedAvatar) {
+      setAvatar(storedAvatar); // Establece el avatar si existe
+    }
   }, []);
 
   const handleServicesClick = () => {
-    window.location.href = 'http://localhost:3001/#services'; // Redirige a la sección de servicios
+    window.location.href = 'http://localhost:3001/#services';
   };
 
   const handleContactClick = () => {
-    window.location.href = 'http://localhost:3001/#contact'; // Redirige a la sección de contacto
+    window.location.href = 'http://localhost:3001/#contact';
   };
 
   const handleGalleryClick = () => {
@@ -33,8 +47,24 @@ const TopBar = ({ handleWorkScroll, handleContactScroll, handleServicesScroll })
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('avatar'); // Elimina el avatar al cerrar sesión
     setIsLoggedIn(false);
+    setUserName('');
+    setAvatar('/images/default-avatar.png'); // Resetea el avatar
     router.push('/');
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result); // Establece el nuevo avatar
+        localStorage.setItem('avatar', reader.result); // Guarda el nuevo avatar en localStorage
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (!mounted) return null;
@@ -44,7 +74,7 @@ const TopBar = ({ handleWorkScroll, handleContactScroll, handleServicesScroll })
       <div className={`w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm 
         border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-10 h-10">
@@ -63,8 +93,8 @@ const TopBar = ({ handleWorkScroll, handleContactScroll, handleServicesScroll })
             </Link>
 
             <nav className="border-t border-gray-100 dark:border-gray-800">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-center py-3 space-x-8">
+              <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-center py-3 space-x-1">
                   <Link href="/" className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium 
                     transition-colors hover:bg-gray-100 dark:hover:bg-gray-800
                     ${theme === 'dark' ? 'text-gray-200 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
@@ -125,6 +155,29 @@ const TopBar = ({ handleWorkScroll, handleContactScroll, handleServicesScroll })
 
                   <div className="flex items-center">
                     <ThemeToggle theme={theme} setTheme={setTheme} />
+                    {isLoggedIn && (
+                      <div className="flex items-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden" // Oculta el input
+                          id="avatar-upload"
+                        />
+                        <span className="ml-2 mr-2 text-sm text-gray-700 dark:text-gray-200">
+                          {userName}{/* Muestra el nombre del usuario con una carita */}
+                        </span>
+                        <label htmlFor="avatar-upload" className="cursor-pointer">
+                          <Image
+                            src={avatar}
+                            alt="Avatar"
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                        </label>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import axios from '../lib/axios';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { FcGoogle } from "react-icons/fc";
 
 const RegisterPage = () => {

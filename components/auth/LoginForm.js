@@ -11,8 +11,9 @@ const LoginForm = ({ onLoginSuccess }) => {
     e.preventDefault();
     try {
       const response = await axios.post('/auth/login', { email, password });
-      const { token } = response.data;
+      const { token, user } = response.data; // Asegúrate de que la respuesta incluya el usuario
       localStorage.setItem('token', token); // Guarda el token en localStorage
+      localStorage.setItem('userName', user.username); // Guarda el nombre del usuario en localStorage
       onLoginSuccess();
     } catch (err) {
       setError('Credenciales inválidas');
