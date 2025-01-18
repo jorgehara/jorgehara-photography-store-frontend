@@ -23,7 +23,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
         <input
           type="email"
           value={email}
@@ -33,7 +33,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
         <input
           type="password"
           value={password}
@@ -44,7 +44,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       </div>
       {error && <p className="text-red-500">{error}</p>}
       <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
-        Iniciar Sesión
+        Iniciar sesión
       </button>
     </form>
   );

@@ -1,3 +1,4 @@
+// jorgehara-photography-store-frontend/pages/register.js
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from '../lib/axios';
@@ -15,13 +16,12 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     country: '',
-    userType: '', // 'photographer' o 'buyer'
+    userType: '', // 'photographer' or 'buyer'
     acceptTerms: false
   });
   const [error, setError] = useState(null);
-  const [showPopup, setShowPopup] = useState(false); // Estado para el popup
+  const [showPopup, setShowPopup] = useState(false);
 
-  // Prellenar datos si el usuario se registra con Google
   useEffect(() => {
     if (session?.user) {
       setFormData(prev => ({
@@ -31,13 +31,12 @@ const RegisterPage = () => {
       }));
     }
   }, [session]);
-  
+
   const countries = [
     { value: 'AR', label: 'Argentina' },
     { value: 'BR', label: 'Brasil' },
     { value: 'CL', label: 'Chile' },
     { value: 'UY', label: 'Uruguay' },
-    // Añade más países según necesites
   ];
 
   const handleChange = (e) => {
@@ -60,18 +59,19 @@ const RegisterPage = () => {
     }
 
     try {
+      const role = formData.userType === 'photographer' ? 'fotografo' : 'comprador';
       await axios.post('/auth/register', {
         username: formData.fullName,
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
         country: formData.country,
-        role: formData.userType === 'photographer' ? 'fotografo' : 'comprador'
+        roles: [role] // Enviar el rol como un array
       });
-      setShowPopup(true); // Mostrar el popup
+      setShowPopup(true);
       setError(null);
       setTimeout(() => {
-        router.push('/gallery'); // Redirige a la galería después de 2 segundos
+        router.push('/gallery');
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Error al crear la cuenta');
@@ -83,28 +83,15 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 shadow-md rounded-lg">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Crear una cuenta
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            ¿Ya tienes una cuenta?{' '}
-            <Link href="/login" className="text-purple-600 hover:text-purple-500">
-              Inicia sesión
-            </Link>
-          </p>
-        </div>
-
-        {/* Mensajes de error */}
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            {error}
-          </div>
-        )}
-
-        {/* Botón de Google */}
+    <div className="min-h-screen flex items-center justify-center bg-orange-100 dark:bg-gray-900">
+      <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200">
+        <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          Bienvenido a StarFotto! 👋
+        </h2>
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          Por favor, crea una cuenta y comienza la aventura
+        </p>
+        
         <div className="mt-6">
           <button
             onClick={handleGoogleLogin}
@@ -115,22 +102,10 @@ const RegisterPage = () => {
           </button>
         </div>
 
-        <div className="mt-6 relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">O regístrate con email</span>
-          </div>
-        </div>
-
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {/* Campos del formulario */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Nombre completo
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre completo</label>
               <input
                 name="fullName"
                 type="text"
@@ -142,9 +117,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
               <input
                 name="email"
                 type="email"
@@ -156,9 +129,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                País
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">País</label>
               <select
                 name="country"
                 value={formData.country}
@@ -176,9 +147,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                ¿Qué deseas hacer?
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">¿Qué deseas hacer?</label>
               <select
                 name="userType"
                 value={formData.userType}
@@ -193,9 +162,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Contraseña
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
               <input
                 name="password"
                 type="password"
@@ -207,9 +174,7 @@ const RegisterPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Confirmar contraseña
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar contraseña</label>
               <input
                 name="confirmPassword"
                 type="password"
@@ -230,7 +195,7 @@ const RegisterPage = () => {
                   className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                   required
                 />
-                <span className="ml-2 text-sm text-gray-600">
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
                   Acepto los{' '}
                   <Link href="/terms" className="text-purple-600 hover:text-purple-500">
                     términos y condiciones
@@ -248,15 +213,14 @@ const RegisterPage = () => {
           </button>
         </form>
 
-        {/* Popup de éxito */}
         {showPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h3 className="text-lg font-bold">Registro exitoso</h3>
-              <p>Usuario registrado exitosamente. Serás redirigido a la galería.</p>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Registro exitoso</h3>
+              <p className="text-gray-700 dark:text-gray-300">Usuario registrado exitosamente. Serás redirigido a la galería.</p>
               <button
                 onClick={() => setShowPopup(false)}
-                className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md"
+                className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
               >
                 Cerrar
               </button>
