@@ -1,8 +1,8 @@
 // components/Albums/CreateAlbumForm.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from '../../lib/axios';
 
-const CreateAlbumForm = ({ onClose }) => {
+const CreateAlbumForm = ({ albumId, onClose }) => {
     const [formData, setFormData] = useState({
         title: '',
         eventName: '',
@@ -10,6 +10,20 @@ const CreateAlbumForm = ({ onClose }) => {
         eventDate: '',
     });
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (albumId) {
+            const fetchAlbum = async () => {
+                try {
+                    const response = await axios.get(`/albums/${albumId}`);
+                    setFormData(response.data);
+                } catch (err) {
+                    setError('Error al cargar el álbum');
+                }
+            };
+            fetchAlbum();
+        }
+    }, [albumId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -22,10 +36,14 @@ const CreateAlbumForm = ({ onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/albums', formData);
-            onClose(); // Cerrar el formulario después de crear el álbum
+            if (albumId) {
+                await axios.patch(`/albums/${albumId}`, formData);
+            } else {
+                await axios.post('/albums', formData);
+            }
+            onClose(); // Cerrar el formulario después de crear o editar
         } catch (err) {
-            setError(err.response?.data?.message || 'Error al crear el álbum');
+            setError(err.response?.data?.message || 'Error al guardar el álbum');
         }
     };
 
@@ -35,7 +53,7 @@ const CreateAlbumForm = ({ onClose }) => {
             <input name="eventName" value={formData.eventName} onChange={handleChange} placeholder="Nombre del Evento" required />
             <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Descripción" />
             <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} />
-            <button type="submit">Crear Álbum</button>
+            <button type="submit">{albumId ? 'Actualizar Álbum' : 'Crear Álbum'}</button>
             {error && <p>{error}</p>}
         </form>
     );
