@@ -6,6 +6,8 @@ import Head from 'next/head';
 import PhotoList from '../../components/Photos/PhotoList';
 import EditPhotoForm from '../../components/Photos/EditPhotoForm';
 import PhotoUploadPopup from '../../components/Photos/PhotoUploadPopup';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AlbumPage = () => {
     const router = useRouter();
@@ -16,6 +18,7 @@ const AlbumPage = () => {
     const [error, setError] = useState(null);
     const [photos, setPhotos] = useState([]);
     const [editingPhotoId, setEditingPhotoId] = useState(null);
+    const [editingPhoto, setEditingPhoto] = useState(null);
 
     useEffect(() => {
         const fetchAlbum = async () => {
@@ -50,7 +53,8 @@ const AlbumPage = () => {
     }, [id]);
 
     const handleEditPhoto = (photoId) => {
-        setEditingPhotoId(photoId);
+        const photoToEdit = photos.find(photo => photo.id === photoId);
+        setEditingPhoto(photoToEdit);
     };
 
     const handleDeletePhoto = async (photoId) => {
@@ -70,6 +74,14 @@ const AlbumPage = () => {
         setShowUploadPopup(false);
     };
 
+    const addToCart = (photoId) => {
+        console.log(`Agregando foto con ID ${photoId} al carrito`);
+    };
+
+    const handlePhotoUpdated = (updatedPhoto) => {
+        setPhotos(photos.map(photo => (photo.id === updatedPhoto.id ? updatedPhoto : photo)));
+    };
+
     if (loading) return <div>Cargando...</div>;
     if (error) return <div>{error}</div>;
 
@@ -78,6 +90,7 @@ const AlbumPage = () => {
             <Head>
                 <title>Fotos del Álbum</title>
             </Head>
+            <ToastContainer />
             <TopBar />
             <main className="pt-16 min-h-screen bg-gray-50 dark:bg-gray-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -89,8 +102,17 @@ const AlbumPage = () => {
                         Agregar Foto
                     </button>
                     <PhotoList albumId={id} photos={photos} onEdit={handleEditPhoto} onDelete={handleDeletePhoto} />
-                    {editingPhotoId && (
-                        <EditPhotoForm photoId={editingPhotoId} onClose={() => setEditingPhotoId(null)} />
+                    {editingPhoto && (
+                        <EditPhotoForm 
+                            photo={editingPhoto} 
+                            onClose={() => {
+                                setEditingPhoto(null);
+                                fetchPhotos();
+                            }}
+                            onPhotoUpdated={(updatedPhoto) => {
+                                setPhotos(photos.map(p => p.id === updatedPhoto.id ? updatedPhoto : p));
+                            }}
+                        />
                     )}
                     {showUploadPopup && (
                         <PhotoUploadPopup
