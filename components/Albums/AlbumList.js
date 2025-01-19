@@ -1,37 +1,36 @@
+// components/Albums/AlbumList.js
 import React, { useEffect, useState } from 'react';
 import axios from '../../lib/axios';
+import AlbumCard from './AlbumCard';
 
 const AlbumList = () => {
-  const [albums, setAlbums] = useState([]);
-  const [error, setError] = useState(null);
+    const [albums, setAlbums] = useState([]);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchAlbums = async () => {
-      try {
-        const response = await axios.get('/albums');
-        setAlbums(response.data);
-      } catch (err) {
-        setError('Error al cargar los álbumes');
-      }
-    };
+    useEffect(() => {
+        const fetchAlbums = async () => {
+            try {
+                const response = await axios.get('/albums');
+                setAlbums(response.data);
+            } catch (err) {
+                setError('Error al cargar los álbumes');
+            }
+        };
 
-    fetchAlbums();
-  }, []);
+        fetchAlbums();
+    }, []);
 
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
+    if (error) {
+        return <p className="text-red-500">{error}</p>;
+    }
 
-  return (
-    <div className="space-y-4">
-      {albums.map((album) => (
-        <div key={album.id} className="p-4 border rounded-md">
-          <h2 className="text-xl font-bold">{album.title}</h2>
-          <p>{album.description}</p>
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {albums.map(album => (
+                <AlbumCard key={album.id} album={album} />
+            ))}
         </div>
-      ))}
-    </div>
-  );
+    );
 };
 
-export default AlbumList; 
+export default AlbumList;
