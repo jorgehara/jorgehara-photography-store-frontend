@@ -4,15 +4,14 @@ import TopBar from '../../components/TopBar';
 import Head from 'next/head';
 import CreateAlbumForm from '../../components/Albums/CreateAlbumForm';
 import AlbumList from '../../components/Albums/AlbumList';
-import CreatePhotoForm from '../../components/Photos/CreatePhotoForm';
+import AlbumDetails from '../../components/Albums/AlbumDetails';
 import axios from '../../lib/axios';
 
 const GalleryPage = () => {
     const [albums, setAlbums] = useState([]);
     const [showCreateAlbum, setShowCreateAlbum] = useState(false);
-    const [showCreatePhoto, setShowCreatePhoto] = useState(false);
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
-    const [showEditAlbum, setShowEditAlbum] = useState(false);
+    const [showAlbumDetails, setShowAlbumDetails] = useState(false);
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -29,7 +28,7 @@ const GalleryPage = () => {
 
     const handleEditAlbum = (id) => {
         setSelectedAlbumId(id);
-        setShowEditAlbum(true); // Mostrar el formulario de edición
+        setShowCreateAlbum(true);
     };
 
     const handleDeleteAlbum = async (id) => {
@@ -39,6 +38,11 @@ const GalleryPage = () => {
         } catch (error) {
             console.error('Error al eliminar el álbum', error);
         }
+    };
+
+    const handleSelectAlbum = (id) => {
+        setSelectedAlbumId(id);
+        setShowAlbumDetails(true);
     };
 
     return (
@@ -53,13 +57,14 @@ const GalleryPage = () => {
                     <button onClick={() => setShowCreateAlbum(true)}>Crear Nuevo Álbum</button>
                     <AlbumList 
                         albums={albums} 
-                        onEdit={handleEditAlbum} // Asegúrate de pasar la función aquí
+                        onEdit={handleEditAlbum} 
                         onDelete={handleDeleteAlbum} 
-                        onSelectAlbum={(id) => { setSelectedAlbumId(id); setShowCreatePhoto(true); }} 
+                        onSelectAlbum={handleSelectAlbum} 
                     />
-                    {showCreateAlbum && <CreateAlbumForm onClose={() => setShowCreateAlbum(false)} />}
-                    {showCreatePhoto && <CreatePhotoForm albumId={selectedAlbumId} onClose={() => setShowCreatePhoto(false)} />}
-                    {showEditAlbum && <CreateAlbumForm albumId={selectedAlbumId} onClose={() => setShowEditAlbum(false)} />} {/* Formulario de edición */}
+                    {showCreateAlbum && <CreateAlbumForm albumId={selectedAlbumId} onClose={() => setShowCreateAlbum(false)} />}
+                    {showAlbumDetails && (
+                        <AlbumDetails albumId={selectedAlbumId} onClose={() => setShowAlbumDetails(false)} />
+                    )}
                 </div>
             </main>
         </>

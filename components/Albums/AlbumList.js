@@ -9,8 +9,9 @@ const AlbumList = ({ albums, onEdit, onDelete, onSelectAlbum }) => {
                 <AlbumCard 
                     key={album.id} 
                     album={album} 
-                    onEdit={onEdit} // Asegúrate de pasar onEdit aquí
-                    onDelete={onDelete} 
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onSelect={onSelectAlbum}
                 />
             ))}
         </div>

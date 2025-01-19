@@ -2,44 +2,71 @@
 import React, { useState } from 'react';
 import axios from '../../lib/axios';
 
-const CreatePhotoForm = ({ albumId, onClose }) => {
-    const [formData, setFormData] = useState({
-        title: '',
-        url: '',
-        fileSize: 0,
-        description: '',
-    });
+const CreatePhotoForm = ({ albumId, onClose, onPhotoAdded }) => {
+    const [file, setFile] = useState(null);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [error, setError] = useState(null);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!file || !title) {
+            setError('Por favor, completa todos los campos requeridos');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('photo', file);
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('albumId', albumId.toString()); // Asegúrate de que albumId se envíe como string
+
         try {
-            await axios.post('/photos', {
-                ...formData,
-                albumId, // ID del álbum al que pertenece
+            const response = await axios.post('/photos', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
-            onClose(); // Cerrar el formulario después de crear la foto
+            if (onPhotoAdded) {
+                onPhotoAdded(response.data);
+            }
+            onClose();
         } catch (err) {
             setError(err.response?.data?.message || 'Error al cargar la foto');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input name="title" value={formData.title} onChange={handleChange} placeholder="Título" required />
-            <input name="url" value={formData.url} onChange={handleChange} placeholder="URL de la foto" required />
-            <input name="fileSize" type="number" value={formData.fileSize} onChange={handleChange} placeholder="Tamaño del archivo (MB)" required />
-            <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Descripción" />
-            <button type="submit">Cargar Foto</button>
-            {error && <p>{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input 
+                type="text" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+                placeholder="Título" 
+                required 
+                className="border rounded p-2 w-full"
+            />
+            <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Descripción"
+                className="border rounded p-2 w-full"
+            />
+            <input 
+                type="file" 
+                onChange={handleFileChange} 
+                className="border rounded p-2 w-full" 
+                accept="image/*" 
+                required
+            />
+            {error && <p className="text-red-500">{error}</p>}
+            <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                Cargar Foto
+            </button>
         </form>
     );
 };
