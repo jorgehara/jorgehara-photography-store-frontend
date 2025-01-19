@@ -6,12 +6,14 @@ import CreateAlbumForm from '../../components/Albums/CreateAlbumForm';
 import AlbumList from '../../components/Albums/AlbumList';
 import AlbumDetails from '../../components/Albums/AlbumDetails';
 import axios from '../../lib/axios';
+import { useRouter } from 'next/router';
 
 const GalleryPage = () => {
     const [albums, setAlbums] = useState([]);
     const [showCreateAlbum, setShowCreateAlbum] = useState(false);
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
     const [showAlbumDetails, setShowAlbumDetails] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -42,7 +44,7 @@ const GalleryPage = () => {
 
     const handleSelectAlbum = (id) => {
         setSelectedAlbumId(id);
-        setShowAlbumDetails(true);
+        router.push(`/gallery/${id}`);
     };
 
     return (
@@ -59,7 +61,7 @@ const GalleryPage = () => {
                         albums={albums} 
                         onEdit={handleEditAlbum} 
                         onDelete={handleDeleteAlbum} 
-                        onSelectAlbum={handleSelectAlbum} 
+                        onSelectAlbum={handleSelectAlbum}
                     />
                     {showCreateAlbum && <CreateAlbumForm albumId={selectedAlbumId} onClose={() => setShowCreateAlbum(false)} />}
                     {showAlbumDetails && (

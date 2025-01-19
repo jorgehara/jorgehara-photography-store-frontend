@@ -23,7 +23,8 @@ const CreatePhotoForm = ({ albumId, onClose, onPhotoAdded }) => {
         formData.append('photo', file);
         formData.append('title', title);
         formData.append('description', description);
-        formData.append('albumId', albumId.toString()); // Asegúrate de que albumId se envíe como string
+        formData.append('albumId', albumId.toString());
+        formData.append('userId', '1'); // Ajusta esto según tu sistema de autenticación
 
         try {
             const response = await axios.post('/photos', formData, {
