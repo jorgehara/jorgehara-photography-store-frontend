@@ -1,3 +1,4 @@
+// jorgehara-photography-store-frontend/next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -7,16 +8,18 @@ const nextConfig: NextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3001',
+        port: '3000',
         pathname: '/uploads/**',
       },
     ],
   },
-};
-
-module.exports = {
-  env: {
-    BACKEND_API_URL: 'http://localhost:3001',
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: 'http://localhost:3000/uploads/:path*',
+      },
+    ];
   },
 };
 
