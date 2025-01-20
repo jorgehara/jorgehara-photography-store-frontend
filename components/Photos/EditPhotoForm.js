@@ -10,13 +10,11 @@ const EditPhotoForm = ({ photo, onClose, onPhotoUpdated }) => {
     const [price, setPrice] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [albumId, setAlbumId] = useState(null);
 
     useEffect(() => {
         if (photo) {
-            setTitle(photo.title || '');
-            setDescription(photo.description || '');
-            setAlbumId(photo.albumId);
+            setTitle(photo.title);
+            setDescription(photo.description);
             setPrice(photo.price?.toString() || '');
         }
     }, [photo]);
@@ -27,19 +25,13 @@ const EditPhotoForm = ({ photo, onClose, onPhotoUpdated }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
         const formData = new FormData();
-        
-        // Agregar solo los campos modificados
-        if (title !== photo.title) formData.append('title', title);
-        if (description !== photo.description) formData.append('description', description);
-        if (price !== photo.price?.toString()) formData.append('price', price);
-        if (file) formData.append('photo', file);
-
-        if (formData.entries().next().done) {
-            setError('No se han realizado cambios');
-            return;
+        if (file) {
+            formData.append('photo', file);
         }
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', price);
 
         setLoading(true);
         try {
@@ -48,28 +40,13 @@ const EditPhotoForm = ({ photo, onClose, onPhotoUpdated }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            
-            // Mostrar notificación de éxito
-            toast.success('¡Foto actualizada exitosamente!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                className: 'bg-green-500',
-            });
-
+            toast.success('¡Foto actualizada exitosamente!');
             if (onPhotoUpdated) {
                 onPhotoUpdated(response.data);
             }
             onClose();
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Error al actualizar la foto', {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            setError(err.response?.data?.message || 'Error al actualizar la foto');
         } finally {
             setLoading(false);
         }

@@ -17,7 +17,6 @@ const AlbumPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [photos, setPhotos] = useState([]);
-    const [editingPhotoId, setEditingPhotoId] = useState(null);
     const [editingPhoto, setEditingPhoto] = useState(null);
 
     useEffect(() => {
@@ -42,6 +41,7 @@ const AlbumPage = () => {
 
             try {
                 const response = await axios.get(`/photos/album/${id}`);
+                console.log("Fotos recibidas:", response.data); // Para debug
                 setPhotos(response.data);
             } catch (error) {
                 console.error('Error al cargar las fotos:', error);
@@ -52,9 +52,8 @@ const AlbumPage = () => {
         fetchPhotos();
     }, [id]);
 
-    const handleEditPhoto = (photoId) => {
-        const photoToEdit = photos.find(photo => photo.id === photoId);
-        setEditingPhoto(photoToEdit);
+    const handleEditPhoto = (photo) => {
+        setEditingPhoto(photo);
     };
 
     const handleDeletePhoto = async (photoId) => {
@@ -67,10 +66,7 @@ const AlbumPage = () => {
     };
 
     const handlePhotoAdded = (newPhoto) => {
-        setAlbum(prev => ({
-            ...prev,
-            photos: [...(prev.photos || []), newPhoto]
-        }));
+        setPhotos(prevPhotos => [...prevPhotos, newPhoto]);
         setShowUploadPopup(false);
     };
 
@@ -85,33 +81,43 @@ const AlbumPage = () => {
     if (loading) return <div>Cargando...</div>;
     if (error) return <div>{error}</div>;
 
+    const handleBack = () => {
+        router.push('/gallery');
+    };
+
     return (
         <>
             <Head>
-                <title>Fotos del Álbum</title>
+                <title>{album ? album.title : 'Cargando...'}</title>
             </Head>
             <ToastContainer />
             <TopBar />
             <main className="pt-16 min-h-screen bg-gray-50 dark:bg-gray-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <h1 className="text-3xl font-bold">Fotos del Álbum {id}</h1>
+                    <button onClick={handleBack} className="flex items-center mb-4 text-blue-500 hover:text-blue-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H3m0 0l6-6m-6 6l6 6" />
+                        </svg>
+                        Volver a Álbumes
+                    </button>
+                    <h1 className="text-3xl font-bold mb-4">{album ? album.title : 'Cargando...'}</h1>
                     <button
                         onClick={() => setShowUploadPopup(true)}
                         className="mb-4 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
                     >
                         Agregar Foto
                     </button>
-                    <PhotoList albumId={id} photos={photos} onEdit={handleEditPhoto} onDelete={handleDeletePhoto} />
+                    <PhotoList 
+                        photos={photos} 
+                        onEdit={handleEditPhoto} 
+                        onDelete={handleDeletePhoto}
+                        addToCart={addToCart}
+                    />
                     {editingPhoto && (
                         <EditPhotoForm 
                             photo={editingPhoto} 
-                            onClose={() => {
-                                setEditingPhoto(null);
-                                fetchPhotos();
-                            }}
-                            onPhotoUpdated={(updatedPhoto) => {
-                                setPhotos(photos.map(p => p.id === updatedPhoto.id ? updatedPhoto : p));
-                            }}
+                            onClose={() => setEditingPhoto(null)} 
+                            onPhotoUpdated={handlePhotoUpdated} 
                         />
                     )}
                     {showUploadPopup && (
