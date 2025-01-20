@@ -31,14 +31,14 @@ const PhotoList = ({ photos, onEdit, onDelete, addToCart }) => {
                             {photo.description && (
                                 <p className="text-gray-600">{photo.description}</p>
                             )}
-                            <p className="text-gray-500">Tamaño: {photo.fileSize} MB</p>
+                            <p className="text-gray-500">Tamaño: {photo.fileSize.toFixed(1)} MB</p>
                             <p className="text-gray-500">Fecha de carga: {new Date(photo.uploadDate).toLocaleDateString()}</p>
                             <p className="text-gray-500">Precio: ${photo.price || 0}</p>
-                            {photo.expirationDate && (
+                            
                                 <p className="text-gray-500">
-                                    Fecha de vencimiento: {new Date(photo.expirationDate).toLocaleDateString()}
+                                    Fecha de vencimiento: 31/12/2025
                                 </p>
-                            )}
+                            
                             <div className="mt-2 flex justify-between">
                                 <button onClick={() => onEdit(photo)} className="text-blue-500 hover:text-blue-700">
                                     Editar
